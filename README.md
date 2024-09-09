@@ -1,5 +1,12 @@
 # Back-End_Puul
 
+## Project Extra Features
+
+- HTTPS enabled for local development, enhancing security
+  - Implemented secure connections using locally stored keys
+  - Access the application at: `https://[::1]:3000`
+- Swagger UI integrated for API documentation and testing
+
 ## Project setup
 
 <details>
@@ -21,12 +28,7 @@
 3. Create a `.env` file in the root of the project and add the following environment variables:
 
     ```bash
-    PORT=3000
-    DB_HOST=localhost
-    DB_PORT=5432
-    DB_USER=postgres
-    DB_PASSWORD=postgres
-    DB_NAME=puul
+    DATABASE_URL="postgres://vkubqpcu:hvoCLkcZWDSwSmTgpkqbpBZyr5yZIcKe@raja.db.elephantsql.com/vkubqpcu"
     ```
 
 4. Since the DB is hosted you only need to generate the prisma client.
@@ -41,6 +43,9 @@
     npm run dev
     ```
 
+6. Access the application and Swagger UI at `https://[::1]:3000/api`
+   - Note: You may need to accept the self-signed certificate in your browser
+
 </details>
 
 ## Database
@@ -50,9 +55,6 @@
 For this project, I decided to host the database on [ElephantSQL](https://www.elephantsql.com/). This is a PostgreSQL database as a free service.
 
 ### DB Schema
-
-<details>
-<summary>See Diagram</summary>
 
 ```marmaid
 erDiagram
@@ -69,21 +71,20 @@ erDiagram
         string title
         string description
         float estimatedHours
-        date dueDate
+        datetime dueDate
         enum status
         float cost
+        datetime createdAt
+        datetime updatedAt
     }
     UserTask {
         int userId FK
         int taskId FK
     }
-
     User ||--o{ UserTask : "assigned to"
     Task ||--o{ UserTask : "assigned to"
 
 ```
-
-</details>
 
 ### ORM Prisma
 
@@ -99,6 +100,7 @@ erDiagram
 
 ## API Endpoints
 
+Implemented some HTTPS
 <details>
 <summary>Endpoints</summary>
 
@@ -140,4 +142,3 @@ erDiagram
      b. User productivity ranking based on completed tasks and their costs
 
 </details>
-

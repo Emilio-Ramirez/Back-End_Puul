@@ -22,17 +22,34 @@ export class UsersService {
 
   async findAll(filterDto: UserFilterDto) {
     const { name, email, role } = filterDto;
-    return this.prisma.user.findMany({
+
+    const users = await this.prisma.user.findMany({
       where: {
-        name: name ? { contains: name } : undefined,
-        email: email ? { contains: email } : undefined,
+        name: name ? { contains: name, mode: 'insensitive' } : undefined,
+        email: email ? { contains: email, mode: 'insensitive' } : undefined,
         role: role,
       },
       include: {
-        _count: {
-          select: { tasks: { where: { task: { status: 'COMPLETED' } } } },
-        },
-      },
+        tasks: {
+          include: {
+            task: true
+          }
+        }
+      }
+    });
+
+    return users.map(user => {
+      const completedTasks = user.tasks.filter(ut => ut.task.status === 'COMPLETED');
+      const totalTasksCost = completedTasks.reduce((sum, ut) => sum + ut.task.cost, 0);
+
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        completedTasksCount: completedTasks.length,
+        totalTasksCost
+      };
     });
   }
 

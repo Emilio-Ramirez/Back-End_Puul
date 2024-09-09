@@ -23,6 +23,23 @@ export class Task {
   @ApiProperty()
   cost: number;
 
-  @ApiProperty({ type: [Number] })
-  assignedUserIds: number[];
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
+  @ApiProperty({ type: () => [User] })
+  users: User[];
+}
+
+class User {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  email: string;
 }

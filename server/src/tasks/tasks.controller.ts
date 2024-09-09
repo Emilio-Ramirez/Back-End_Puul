@@ -30,14 +30,10 @@ export class TasksController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all tasks' })
+  @ApiOperation({ summary: 'Get all tasks with filters' })
   @ApiResponse({ status: 200, description: 'Return all tasks.', type: [Task] })
   async findAll(@Query() filterDto: TaskFilterDto) {
-    try {
-      return await this.tasksService.findAll(filterDto);
-    } catch (error) {
-      throw new InternalServerErrorException('Something went wrong');
-    }
+    return this.tasksService.findAll(filterDto);
   }
 
   @Put(':id')
@@ -59,14 +55,16 @@ export class TasksController {
   @ApiOperation({ summary: 'Delete task' })
   @ApiResponse({ status: 200, description: 'The task has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Task not found.' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async remove(@Param('id') id: string) {
     try {
       return await this.tasksService.remove(+id);
     } catch (error) {
+      this.logger.error(`Failed to delete task: ${error.message}`, error.stack);
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException('Something went wrong');
+      throw new InternalServerErrorException(`Failed to delete task: ${error.message}`);
     }
   }
 

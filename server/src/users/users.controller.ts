@@ -10,7 +10,7 @@ import { PrismaExceptionFilter } from '../shared/prisma-exception.filter';
 @Controller('users')
 @UseFilters(PrismaExceptionFilter)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post()
   @ApiOperation({ summary: 'Create user' })
@@ -30,7 +30,7 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'Return all users.', type: [User] })
+  @ApiResponse({ status: 200, description: 'Return all users with completed tasks count and total cost.', type: [User] })
   async findAll(@Query() filterDto: UserFilterDto) {
     try {
       return await this.usersService.findAll(filterDto);
