@@ -24,13 +24,15 @@ model User {
 }
 
 model Task {
-  id             Int        @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   title          String
   description    String
   estimatedHours Float
   dueDate        DateTime
   status         TaskStatus
   cost           Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   users          UserTask[]
 }
 
