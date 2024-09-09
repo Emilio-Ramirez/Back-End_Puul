@@ -12,3 +12,43 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id                 Int        @id @default(autoincrement())
+  name               String
+  email              String     @unique
+  role               UserRole
+  completedTasksCount Int       @default(0)
+  totalTasksCost     Float      @default(0)
+  tasks              UserTask[]
+}
+
+model Task {
+  id             Int        @id @default(autoincrement())
+  title          String
+  description    String
+  estimatedHours Float
+  dueDate        DateTime
+  status         TaskStatus
+  cost           Float
+  users          UserTask[]
+}
+
+model UserTask {
+  userId Int
+  taskId Int
+  user   User @relation(fields: [userId], references: [id])
+  task   Task @relation(fields: [taskId], references: [id])
+
+  @@id([userId, taskId])
+}
+
+enum UserRole {
+  MEMBER
+  ADMIN
+}
+
+enum TaskStatus {
+  ACTIVE
+  COMPLETED
+}
